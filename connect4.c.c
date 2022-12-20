@@ -142,28 +142,29 @@ int main_menu(void)
     switch(pos)
 
      {case 0 :   gotoxy(39,19);
-        draw_the_box(30,8,39,19);
+     system("cls");
+        draw_the_box(30,8,39,11);
      do{
     HANDLE console_color = GetStdHandle(STD_OUTPUT_HANDLE);
     SetConsoleTextAttribute(console_color , 15 );
 
 
-    gotoxy(40,20);printf(" 1) Start a new game          ");
-    gotoxy(40,21);printf("   i) player vs player        ");
-    gotoxy(40,22);printf("   ii)player vs comp          ");
-    gotoxy(40,23);printf(" 2) Load a game               ");
-    gotoxy(40,24);printf(" 3) Top players               ");
-    gotoxy(40,25);printf(" 4) Quit                      ");
+    gotoxy(40,12);printf(" 1) Start a new game          ");
+    gotoxy(40,13);printf("   i) player vs player        ");
+    gotoxy(40,14);printf("   ii)player vs comp          ");
+    gotoxy(40,15);printf(" 2) Load a game               ");
+    gotoxy(40,16);printf(" 3) Top players               ");
+    gotoxy(40,17);printf(" 4) Quit                      ");
     printf("\n");
 
 
         switch(pos)
         {
             case 0 : SetConsoleTextAttribute(console_color , 240 );
-                    gotoxy(40,21);printf("   i) player vs player        ");
+                    gotoxy(40,12);printf("   i) player vs player        ");
                     break ;
             case 1 : SetConsoleTextAttribute(console_color , 240 );
-                    gotoxy(40,22);printf("   ii)player vs comp          ");
+                    gotoxy(40,13);printf("   ii)player vs comp          ");
                     break ;
         }
 
