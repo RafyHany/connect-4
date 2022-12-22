@@ -13,7 +13,7 @@ int computer_turn(int width);
 void pvp();
 void pvc();
 
-void main()
+int main()
 {
     switch (main_menu())
     {
@@ -28,10 +28,9 @@ void main()
         case 4 : loadgame(3);
           break;*/
     }
-    time_t start_time=time(NULL);
          srand(time(NULL));
 
-
+         return 0 ;
 }
 
 
@@ -282,7 +281,7 @@ void the_game(int h, int w)
 void make_array(int a[] , int p , int h)
 {
     for(int i = 0 ; i < p ; i++)
-        a[i]=h;
+        a[i] = h ;
 }
 
 
@@ -295,20 +294,22 @@ void fill(int f , int g , int c )
     printf("    ");
 }
 
-void play(int a[] ,int n, int w,int c)
+int play(int a[] ,int n, int w,int c)
 {
     HANDLE console_color = GetStdHandle(STD_OUTPUT_HANDLE);
-    while((n < 0 || n > w)||(a[n] == 0))
+
+    while(n <= 0 || n > w ||a[n]==0)
     {
         gotoxy(35,4);printf("ENTER A VALID INPUT");
         gotoxy(35,5);scanf("%d",&n);
-        gotoxy(35,4);printf("                   ");
+        gotoxy(35,4);printf("                   \n            ");
 
     }
 
-        fill(25+6*n , 7+3*a[n] , c);
+        fill(25+(6*n) , 7+(3*a[n]) , c);
         SetConsoleTextAttribute(console_color , 15 );
         a[n]-- ;
+        return n ;
 }
 
 
@@ -319,7 +320,7 @@ void pvp(void)
     int h = 6 , w = 7 ;
     the_game(h,w);
     int q ;int n ;
-    int a[w];
+    int a[w+1];
     int b[h][w];
     make_array(a,w+1,h);
     for(int i = 0 ; i < h ; i++){
@@ -327,22 +328,25 @@ void pvp(void)
             b[i][j] = 0 ;
          }
     }
+    time_t start_time=time(NULL);
     for(int i = 0 ; i < w*h ; i++)
     {
         q = i % 2 ;
         if ( q == 0){
+            gotoxy(35,2); time_passed(start_time);
             gotoxy(35,3);printf("player 1 turn");
             gotoxy(35,5);scanf("%d",&n);
+            n = play(a,n,w,BACKGROUND_RED);
+            gotoxy(35,5);printf("                 ");
             b[n-1][a[n]] = 1 ;
-            play(a,n,w,BACKGROUND_RED);
-            gotoxy(35,5);printf("    ");
         }
         else{
+            gotoxy(35,2); time_passed(start_time);
             gotoxy(35,3);printf("player 2 turn");
              gotoxy(35,5);scanf("%d",&n);
-             b[n-1][a[n]] = -1 ;
-            play(a,n,w,BACKGROUND_GREEN);
-            gotoxy(35,5);printf("    ");
+            n = play(a,n,w,BACKGROUND_GREEN);
+            gotoxy(35,5);printf("                 ");
+            b[n-1][a[n]] = -1 ;
         }
     }
     printf("\n");
@@ -368,19 +372,19 @@ void pvc(void)
         if ( q == 0){
             gotoxy(35,3);printf("player 1 turn");
             gotoxy(35,5);scanf("%d",&n);
-            b[n-1][a[n]] = 1 ;
-            play(a,n,w,BACKGROUND_RED);
+            n = play(a,n,w,BACKGROUND_RED);
             gotoxy(35,5);printf("    ");
+            b[n-1][a[n]] = 1 ;
         }
         else{
             gotoxy(35,3);printf("computer turn");
              do
              {
-                 n = computer_turn(w+1);
+            n = computer_turn(w+1);
              }while(a[n] == 0);
              gotoxy(35,5);printf("%d",n);
+            n = play(a,n,w,BACKGROUND_GREEN);
              b[n-1][a[n]] = -1 ;
-            play(a,n,w,BACKGROUND_GREEN);
         }
     }
     printf("\n");
