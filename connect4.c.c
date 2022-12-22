@@ -366,7 +366,7 @@ void pvp(void)
 void pvc(void)
 {
     system("cls");
-    int h = 6 , w = 7 ;
+    int h = 6 , w = 7 ; int p ;
     the_game(h,w);
     int q , n , score1 = 0 , score2 = 0 ;
     int a[w+1];
@@ -383,8 +383,12 @@ void pvc(void)
         q = i % 2 ;
         if ( q == 0){
             gotoxy(35,2); time_passed(start_time);
-            gotoxy(35,3);printf("player 1 turn");
-            gotoxy(35,5);scanf("%d",&n);
+            gotoxy(35,3);printf("computer turn");
+             do
+             {
+              n = computer_turn(w);
+             }while(a[n] == 0  );
+             scanf("%d",&p);
             n = play(a,n,w,BACKGROUND_RED);
             gotoxy(35,5);printf("    ");
             b[a[n]][n] = 1 ;
