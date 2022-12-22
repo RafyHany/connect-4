@@ -19,7 +19,7 @@ void main()
     {
         case 0 : pvp();
           break ;
-        //case 1 : pvc()
+        case 1 : pvc();
           break ;
     }
     time_t start_time=time(NULL);
@@ -150,8 +150,8 @@ int main_menu(void)
 
 
     gotoxy(40,12);printf(" 1) Start a new game          ");
-    gotoxy(40,13);printf("   i) player vs player        ");
-    gotoxy(40,14);printf("   ii)player vs comp          ");
+    gotoxy(40,13);printf("   i)  player vs player       ");
+    gotoxy(40,14);printf("   ii) player vs comp         ");
     gotoxy(40,15);printf(" 2) Load a game               ");
     gotoxy(40,16);printf(" 3) Top players               ");
     gotoxy(40,17);printf(" 4) Quit                      ");
@@ -161,10 +161,10 @@ int main_menu(void)
         switch(pos)
         {
             case 0 : SetConsoleTextAttribute(console_color , 240 );
-                    gotoxy(40,13);printf("   i) player vs player        ");
+                    gotoxy(40,13);printf("   i)  player vs player       ");
                     break ;
             case 1 : SetConsoleTextAttribute(console_color , 240 );
-                    gotoxy(40,14);printf("   ii)player vs comp          ");
+                    gotoxy(40,14);printf("   ii) player vs comp         ");
                     break ;
         }
 
@@ -177,6 +177,57 @@ int main_menu(void)
         {
             pos--;
             if (pos == -1) pos = 1;
+        }
+    }while( c != 13);
+    printf("\n\n\n\n");
+
+    SetConsoleTextAttribute(console_color , 15 );
+
+    return pos ;
+
+}
+    if (pos == 1)
+
+     {   gotoxy(39,19);
+     system("cls");
+        draw_the_box(30,9,39,11);
+     do{
+    HANDLE console_color = GetStdHandle(STD_OUTPUT_HANDLE);
+    SetConsoleTextAttribute(console_color , 15 );
+
+
+    gotoxy(40,12);printf(" 1) Start a new game          ");
+    gotoxy(40,13);printf(" 2) Load a game               ");
+    gotoxy(40,14);printf("   i)   game 1                ");
+    gotoxy(40,15);printf("   ii)  game 2                ");
+    gotoxy(40,16);printf("   iii) game 3                ");
+    gotoxy(40,17);printf(" 3) Top players               ");
+    gotoxy(40,18);printf(" 4) Quit                      ");
+    printf("\n");
+
+
+        switch(pos)
+        {
+            case 0 : SetConsoleTextAttribute(console_color , 240 );
+                    gotoxy(40,14);printf("   i)   game 1                ");
+                    break ;
+            case 1 : SetConsoleTextAttribute(console_color , 240 );
+                    gotoxy(40,15);printf("   ii)  game 2                ");
+                    break ;
+            case 2 : SetConsoleTextAttribute(console_color , 240 );
+                    gotoxy(40,16);printf("   iii) game 3                ");
+                    break ;
+        }
+
+        c = getch();
+        if(c == 80)
+        {
+            pos = (++pos) % 3;
+        }
+        else if(c == 72)
+        {
+            pos--;
+            if (pos == -1) pos = 2;
         }
     }while( c != 13);
     printf("\n\n\n\n");
@@ -272,6 +323,31 @@ void pvp(void)
         else{
             gotoxy(35,6);printf("player 2 turn");
              gotoxy(35,8);scanf("%d",&n);
+            play(a,n,BACKGROUND_GREEN);
+        }
+    }
+    printf("\n");
+}
+
+void pvc(void)
+{
+    system("cls");
+    the_game(6,7);
+    int q ;int n ;
+    int a[8];
+    make_array(a,8,6);
+    for(int i = 0 ; i < 6*7 ; i++)
+    {
+        q = i % 2 ;
+        if ( q == 0){
+            gotoxy(35,6);printf("player 1 turn");
+            gotoxy(35,8);scanf("%d",&n);
+            play(a,n,BACKGROUND_RED);
+        }
+        else{
+            gotoxy(35,6);printf("computer turn");
+             n = computer_turn(8);
+             gotoxy(35,8);printf("%d",n);
             play(a,n,BACKGROUND_GREEN);
         }
     }
