@@ -415,7 +415,7 @@ void horizontal_check(int*score,int width_input,int heigh_input,int width,int he
 {
 
    int found=1 ;
-   if(width_input+3<width)
+   if(width_input+3<=width)
    {
    for(int i=width_input+1;i<=width_input+3;++i) //to check if there is 3 in right
       {
@@ -444,6 +444,8 @@ void horizontal_check(int*score,int width_input,int heigh_input,int width,int he
         (*score)++;
     found=1;
    }
+   if(width_input-2>=0&&width_input+1<=width)
+   {
       for(int i=width_input-2;i<=width_input+1;++i) //to check if there is 2 in left and 1 in right
        {
         if(a[heigh_input][width_input]!=a[heigh_input][i])
@@ -455,6 +457,9 @@ void horizontal_check(int*score,int width_input,int heigh_input,int width,int he
     if(found==1)
         (*score)++;
     found=1;
+   }
+   if(width_input-1>=0&&width_input+2<=width)
+   {
       for(int i=width_input-1;i<=width_input+2;++i) //to check if there is 1 in left and 2 in right
        {
         if(a[heigh_input][width_input]!=a[heigh_input][i])
@@ -465,6 +470,7 @@ void horizontal_check(int*score,int width_input,int heigh_input,int width,int he
        }
     if(found==1)
         (*score)++;
+   }
 }
 
 void vertical_check(int*score,int width_input,int heigh_input,int width,int heigh,int a[][width]) // to check if there is 3 below
@@ -472,7 +478,7 @@ void vertical_check(int*score,int width_input,int heigh_input,int width,int heig
   int found=1;
   for(int i=heigh_input+1;i<=heigh_input+3;++i)
         {
-        if(a[heigh_input][width_input]!=a[i][width_input])
+        if((a[heigh_input][width_input]!=a[i][width_input])||(heigh_input+3>=heigh))
          {
             found=0;
             break;
@@ -484,7 +490,7 @@ void vertical_check(int*score,int width_input,int heigh_input,int width,int heig
 void diagonal_45_check(int*score,int width_input,int heigh_input,int width,int heigh,int a[][width]) // to check 45 diagonal
 {
   int found=1;
-  if(width_input+3<width&&heigh_input-3>=0)
+  if(width_input+3<=width&&heigh_input-3>=0)
   {
 
   for(int i=heigh_input-1,j=width_input+1;i>=heigh_input-3,j<=width_input+3;--i,++j) //to check 3 in right 45 diagonal
@@ -501,7 +507,7 @@ void diagonal_45_check(int*score,int width_input,int heigh_input,int width,int h
     found=1;
 
   }
- if(width_input-3>=0&&heigh_input+3<heigh)
+ if(width_input-3>=0&&heigh_input+3<=heigh)
  {
   for(int i=heigh_input+1,j=width_input-1;i<=heigh_input+3,j>=width_input-3;++i,--j)  //to check 3 in left 45 diagonal
         {
@@ -517,6 +523,8 @@ void diagonal_45_check(int*score,int width_input,int heigh_input,int width,int h
     found=1;
 
  }
+ if(width_input-1>=0&&heigh_input+1<=heigh&&width_input+2<=width&&heigh_input-2>=0 )
+ {
   for(int i=heigh_input+1,j=width_input-1;i>=heigh_input-2,j<=width_input+2;--i,++j)  //to check 1 in left 45 diagonal and 2 in right 45 diagonal
         {
 
@@ -529,6 +537,9 @@ void diagonal_45_check(int*score,int width_input,int heigh_input,int width,int h
     if(found==1)
         (*score)++;
     found=1;
+ }
+ if(width_input-2>=0&&heigh_input+2<=heigh&&width_input+1<=width&&heigh_input-1>=0)
+ {
     for(int i=heigh_input+2,j=width_input-2;i>=heigh_input-1,j<=width_input+1;--i,++j)  //to check 2 in left 45 diagonal and 1 in right 45 diagonal
         {
 
@@ -540,6 +551,7 @@ void diagonal_45_check(int*score,int width_input,int heigh_input,int width,int h
         }
     if(found==1)
         (*score)++;
+ }
 
 }
 void diagonal_135_check(int*score,int width_input,int heigh_input,int width,int heigh,int a[][width]) //to check diagonal 135
@@ -560,7 +572,7 @@ void diagonal_135_check(int*score,int width_input,int heigh_input,int width,int 
         (*score)++;
      found=1;
     }
-      if(heigh_input+3<heigh&&width_input+3<width)
+      if(heigh_input+3<=heigh&&width_input+3<=width)
     {
        for(int i=heigh_input+1,j=width_input+1;i<=heigh_input+3,j<=width_input+3;++i,++j) //to check 3 right 135 diagonal
         {
@@ -575,7 +587,7 @@ void diagonal_135_check(int*score,int width_input,int heigh_input,int width,int 
         (*score)++;
     found=1;
     }
-   if(heigh_input-2>=0&&width_input-2>=0&&heigh_input+1<heigh&&width_input+1<width)
+   if(heigh_input-2>=0&&width_input-2>=0&&heigh_input+1<=heigh&&width_input+1<=width)
    {
     for(int i=heigh_input+1,j=width_input+1;i>=heigh_input-2,j>=width_input-2;--i,--j)//to check 2 left 1 right 135 diagonal
         {
@@ -590,7 +602,7 @@ void diagonal_135_check(int*score,int width_input,int heigh_input,int width,int 
         (*score)++;
       found=1;
    }
-   if(heigh_input-1>=0&&width_input-1>=0&&heigh_input+2<heigh&&width_input+2<width)
+   if(heigh_input-1>=0&&width_input-1>=0&&heigh_input+2<=heigh&&width_input+2<=width)
    {
     for(int i=heigh_input+2,j=width_input+2;i>=heigh_input-1,j>=width_input-1;--i,--j) //to check 1 left 2 right 135 diagonal
         {
