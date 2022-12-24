@@ -269,6 +269,9 @@ void time_passed(time_t start_time)
 
 // THE GAME
 
+
+
+
 void the_game(int h, int w)
 {
     for(int k = 1 ; k < w+1 ; k++ ){
@@ -324,7 +327,12 @@ void pvp(void)
     system("cls");
     int h = 6 , w = 7 ;
     the_game(h,w);
-    int q ;int n ;int score1 = 0 , score2 = 0 ;
+    draw_the_box(19,5,1,0);
+    gotoxy(2,1);printf("for undo enter -> u");
+    gotoxy(2,2);printf("for redo enter -> r");
+    gotoxy(2,3);printf("for save enter -> s");
+    int q ;int score1 = 0 , score2 = 0 ;int n = 0 ;
+    char in[100];char op ;
     int a[w+1];
     int b[h][w];
     make_array(a,w+1,h);
@@ -334,33 +342,67 @@ void pvp(void)
          }
     }
     time_t start_time=time(NULL);
-    for(int i = 0 ; i < w*h ; i++)
+    int i = 0;
+    while(i < w*h)
     {
         q = i % 2 ;
         if ( q == 0){
             gotoxy(35,2); time_passed(start_time);
             gotoxy(35,3);printf("player 1 turn");
-            gotoxy(35,5);scanf("%d",&n);
+            gotoxy(35,5);fgets(in,100,stdin);
+            if(atoi(in) != 0 ){
+            n = atoi(in);
             n = play(a,n,w,BACKGROUND_RED);
             gotoxy(35,5);printf("                 ");
             b[a[n]][n] = 1 ;
             check_score(&score1,n,a[n],w,h,b);
             gotoxy(35,1);printf("p1 score : %d  -  p2 score : %d",score1,score2);
-
+            i++;
+            }
+            else
+            {
+                op = in[0] ;
+                switch(op)
+                {
+                    case 'u' : printf("undo");
+                      break ;
+                    case 'r' : printf("redo");
+                      break;
+                    case 's' : printf("save");
+                      break;
+                }
+            }
         }
         else{
             gotoxy(35,2); time_passed(start_time);
             gotoxy(35,3);printf("player 2 turn");
-            gotoxy(35,5);scanf("%d",&n);
+            gotoxy(35,5);fgets(in,100,stdin);
+            if(atoi(in) != 0 ){
+            n = atoi(in);
             n = play(a,n,w,BACKGROUND_GREEN);
             gotoxy(35,5);printf("                 ");
             b[a[n]][n] = -1 ;
             check_score(&score2,n,a[n],w,h,b);
             gotoxy(35,1);printf("p1 score : %d  -  p2 score : %d",score1,score2);
-
+            i++;
+            }
+             else
+            {
+                op = in[0] ;
+                switch(op)
+                {
+                    case 'u' : printf("undo");
+                      break ;
+                    case 'r' : printf("redo");
+                      break;
+                    case 's' : printf("save");
+                      break;
+                }
+            }
         }
     }
     printf("\n");
+
 }
 
 void pvc(void)
@@ -368,8 +410,13 @@ void pvc(void)
     system("cls");
     int h = 6 , w = 7 ; int p ;
     the_game(h,w);
+    draw_the_box(19,5,1,0);
+    gotoxy(2,1);printf("for undo enter -> u");
+    gotoxy(2,2);printf("for redo enter -> r");
+    gotoxy(2,3);printf("for save enter -> s");
     int q , n , score1 = 0 , score2 = 0 ;
     int a[w+1];
+    char in[100];char op ;
     make_array(a,w+1,h);
     int b[h][w];
     for(int i = 0 ; i < h ; i++){
@@ -378,22 +425,36 @@ void pvc(void)
          }
     }
     time_t start_time=time(NULL);
-    for(int i = 0 ; i < w*h ; i++)
+    int i = 0 ;
+    while(i < w*h)
     {
         q = i % 2 ;
         if ( q == 0){
             gotoxy(35,2); time_passed(start_time);
-            gotoxy(35,3);printf("computer turn");
-             do
-             {
-              n = computer_turn(w);
-             }while(a[n] == 0  );
-             scanf("%d",&p);
+            gotoxy(35,3);printf("player 1 turn");
+            gotoxy(35,5);fgets(in,100,stdin);
+            if(atoi(in) != 0 ){
+            n = atoi(in);
             n = play(a,n,w,BACKGROUND_RED);
-            gotoxy(35,5);printf("    ");
+            gotoxy(35,5);printf("                 ");
             b[a[n]][n] = 1 ;
             check_score(&score1,n,a[n],w,h,b);
-            gotoxy(35,1);printf("p1 score : %d  -  comp score : %d",score1,score2);
+            gotoxy(35,1);printf("p1 score : %d  -  p2 score : %d",score1,score2);
+            i++;
+            }
+            else
+            {
+                op = in[0] ;
+                switch(op)
+                {
+                    case 'u' : printf("undo");
+                      break ;
+                    case 'r' : printf("redo");
+                      break;
+                    case 's' : printf("save");
+                      break;
+                }
+            }
         }
         else{
             gotoxy(35,2); time_passed(start_time);
@@ -407,9 +468,9 @@ void pvc(void)
             b[a[n]][n] = -1 ;
             check_score(&score2,n,a[n],w,h,b);
             gotoxy(35,1);printf("p1 score : %d  -  comp score : %d",score1,score2);
+            i++;
         }
     }
-    printf("\n");
 }
 void horizontal_check(int*score,int width_input,int heigh_input,int width,int heigh,int a[][width]) //check horizontal row
 {
