@@ -275,11 +275,11 @@ void time_passed(time_t start_time)
 void the_game(int h, int w)
 {
     for(int k = 1 ; k < w+1 ; k++ ){
-        gotoxy(25+6*k,8);printf(" %d ",k);
+        gotoxy(0+6*k,8);printf(" %d ",k);
     }
     for(int i = 0 ; i < h ; i++){
         for( int j = 0 ; j < w ; j++){
-            draw_the_box(4,3,30 + 6*j,9 + i*3);
+            draw_the_box(4,3,5 + 6*j,9 + i*3);
         }
     }
 
@@ -314,7 +314,7 @@ int play(int a[] ,int n, int w,int c)
 
     }
 
-        fill(25+(6*n) , 7+(3*a[n]) , c);
+        fill((6*n) , 7+(3*a[n]) , c);
         SetConsoleTextAttribute(console_color , 15 );
         a[n]-- ;
         return n ;
