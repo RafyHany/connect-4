@@ -4,6 +4,9 @@
 #include <string.h>
 #include <time.h>
 #include <windows.h>
+//globals
+
+
 
 //main functions
 
@@ -17,6 +20,9 @@ void vertical_check(int*score,int width_input,int heigh_input,int width,int heig
 void diagonal_45_check(int*score,int width_input,int heigh_input,int width,int heigh,int a[][width]);
 void diagonal_135_check(int*score,int width_input,int heigh_input,int width,int heigh,int a[][width]);
 void check_score(int* score,int width_input,int heigh_input,int width,int heigh,int a[][width]);
+void push(int*top,int temp_stack[], int index);
+int pop (int*top,int temp_stack[]);
+void undo(int undo_stack[],int*top_undo,int redo_stack[],int*top_redo,int a[],int b[][sizeof(a)-1],int *score );
 
 int main()
 {
@@ -286,9 +292,9 @@ void the_game(int h, int w)
 }
 
 
-void make_array(int a[] , int p , int h)
+void make_array(int a[] , int w , int h)
 {
-    for(int i = 0 ; i < p ; i++)
+    for(int i = 0 ; i < w ; i++)
         a[i] = h ;
 }
 
@@ -335,6 +341,8 @@ void pvp(void)
     char in[100];char op ;
     int a[w+1];
     int b[h][w];
+     int top_undo = -1 , top_redo = -1 ;
+int undo_stack[6*7] ,  redo_stack[6*7] ;
     make_array(a,w+1,h);
     for(int i = 0 ; i < h ; i++){
          for(int j = 0 ; j < w ; j++){
@@ -353,6 +361,7 @@ void pvp(void)
             if(atoi(in) != 0 ){
             n = atoi(in);
             n = play(a,n,w,BACKGROUND_RED);
+            push(&top_undo , undo_stack , n);
             gotoxy(35,5);printf("                 ");
             b[a[n]][n] = 1 ;
             check_score(&score1,n,a[n],w,h,b);
@@ -364,7 +373,8 @@ void pvp(void)
                 op = in[0] ;
                 switch(op)
                 {
-                    case 'u' : printf("undo");
+                    case 'u' : undo(undo_stack,&top_undo,redo_stack,& top_redo,a,b,&score1);
+                      i = i-2;
                       break ;
                     case 'r' : printf("redo");
                       break;
@@ -380,6 +390,7 @@ void pvp(void)
             if(atoi(in) != 0 ){
             n = atoi(in);
             n = play(a,n,w,BACKGROUND_GREEN);
+            push(&top_undo , undo_stack , n);
             gotoxy(35,5);printf("                 ");
             b[a[n]][n] = -1 ;
             check_score(&score2,n,a[n],w,h,b);
@@ -391,7 +402,8 @@ void pvp(void)
                 op = in[0] ;
                 switch(op)
                 {
-                    case 'u' : printf("undo");
+                    case 'u' : undo(undo_stack,&top_undo,redo_stack,& top_redo,a,b,&score2);
+                      i = i - 2 ;
                       break ;
                     case 'r' : printf("redo");
                       break;
@@ -432,7 +444,9 @@ void pvc(void)
         if ( q == 0){
             gotoxy(35,2); time_passed(start_time);
             gotoxy(35,3);printf("player 1 turn");
+
             gotoxy(35,5);fgets(in,100,stdin);
+
             if(atoi(in) != 0 ){
             n = atoi(in);
             n = play(a,n,w,BACKGROUND_RED);
@@ -687,4 +701,31 @@ void check_score(int*score,int width_input,int heigh_input,int width,int heigh,i
    diagonal_135_check(score,width_input,heigh_input,width,heigh,a);
 }
 
+
+void push(int*top,int temp_stack[], int index)
+{
+    ++(*top);
+    temp_stack[*top]=index;
+}
+
+int pop (int*top,int temp_stack[])
+{
+ int out_element = temp_stack[*top];
+ --(*top);
+ return out_element;
+}
+
+void undo(int undo_stack[],int*top_undo,int redo_stack[],int*top_redo,int a[],int b[][sizeof(a)-1],int *score )
+{
+    int score_new = 0,col,out_element,w;
+    w=sizeof(a)-1;
+    col=undo_stack[*(top_undo)];
+    check_score(&score_new,col,a[col],w,a[0],b);
+    *score = *score - score_new;
+    out_element=pop(top_undo,undo_stack);
+    push(top_redo,redo_stack,out_element);
+    b[a[col]][col-1]=0;
+    fill(6*col,7+(3*a[col]),15);
+    ++a[col];
+}
 
