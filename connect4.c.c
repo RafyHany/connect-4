@@ -385,20 +385,23 @@ int pvp(void)
                 op = in[0] ;
                 switch(op)
                 {
-                    case 'u' : if(undo(a)){
+                    case 'u' : //if(undo(a)){
                        i-- ;
-                     //  check_score(&temp_score,n,a[n],w,h,b);
-                       //score1-=temp_score;
-                       b[a[stack_play[top]]][stack_play[top]] = 0 ;
+                       check_score(&temp_score,stack_play[top],a[stack_play[top]],w,h,b);
+                       score2-=temp_score;
+                       undo(a);
+                       b[a[stack_play[top+1]]][stack_play[top+1]] = 0 ;
                        undos++ ;
                        gotoxy(35,1);printf("p1 score : %d  -  p2 score : %d",score1,score2);
-                      // temp_score=0;
+                       temp_score=0;
 
-                    }
+                   // }
                        break ;
                     case 'r' : if(redo(a,w,BACKGROUND_RED,score1,undos)){
                        i++;
                        b[a[stack_play[top]]][stack_play[top]] = 1 ;
+                     check_score(&score1,stack_play[top],a[stack_play[top]],w,h,b);
+
                        undos--;
                     }
                       break;
@@ -431,18 +434,21 @@ int pvp(void)
                 op = in[0] ;
                 switch(op)
                 {
-                    case 'u' : if(undo(a)){
+                    case 'u' :// if(undo(a)){
                        i-- ;
-                        //  check_score(&temp_score,n,a[n],w,h,b);
-                       //score2-=temp_score;
-                       b[a[stack_play[top]]][stack_play[top]] = 0 ;
+                        check_score(&temp_score,stack_play[top],a[stack_play[top]],w,h,b);
+                       score1-=temp_score;
+                       undo(a);
+                       b[a[stack_play[top+1]]][stack_play[top+1]] = 0 ;
                        undos++ ;
-                       //temp_score=0;
-                    }
+                       temp_score=0;
+                    //}
                       break ;
                     case 'r' : if(redo(a,w,BACKGROUND_GREEN,score2,undos)){
                        i++;
+
                        b[a[stack_play[top]]][stack_play[top]] = -1 ;
+                        check_score(&score2,stack_play[top],a[stack_play[top]],w,h,b);
                        undos-- ;
                     }
                       break;
