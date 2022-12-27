@@ -9,6 +9,8 @@
 #define MAX   6*7
 int stack_play[MAX];
 int top = -1;
+int h = 6 ;
+int w = 7 ;
 
 //main functions
 
@@ -25,17 +27,18 @@ void check_score(int* score,int width_input,int heigh_input,int width,int heigh,
 void push(int n);
 int pop ();
 int undo(int a[] );
-int redo(int a [] , int w , int c , int score , int undos);
+int redo(int a [] , int w , int c , int score , int undos , int b[][7]);
+
 
 int main()
 {
     switch (main_menu())
     {
-        case 0 : while (pvp()){
+        case 0 : if (pvp()){
           main();
           }
           break ;
-        case 1 : while (pvp()){
+        case 1 : if (pvc()){
           main();
           }
           break ;
@@ -391,7 +394,7 @@ int pvp(void)
                        undos++ ;
                     }
                        break ;
-                    case 'r' : if(redo(a,w,BACKGROUND_RED,score1,undos)){
+                    case 'r' : if(redo(a,w,BACKGROUND_RED,score1,undos,b)){
                        i++;
                        b[a[stack_play[top]]][stack_play[top]] = 1 ;
                        undos--;
@@ -432,7 +435,7 @@ int pvp(void)
                        undos++ ;
                     }
                       break ;
-                    case 'r' : if(redo(a,w,BACKGROUND_GREEN,score2,undos)){
+                    case 'r' : if(redo(a,w,BACKGROUND_GREEN,score2,undos,b)){
                        i++;
                        b[a[stack_play[top]]][stack_play[top]] = -1 ;
                        undos-- ;
@@ -507,11 +510,11 @@ int pvc(void)
                       undos++ ;
                       }
                       break ;
-                    case 'r' : if(redo(a,w,BACKGROUND_RED,score1,undos)){
+                    case 'r' : if(redo(a,w,BACKGROUND_RED,score1,undos,b)){
                        i++;
                        b[a[stack_play[top]]][stack_play[top]] = 1 ;
                        }
-                       if(redo(a,w,BACKGROUND_GREEN,score2,undos)){
+                       if(redo(a,w,BACKGROUND_GREEN,score2,undos,b)){
                        b[a[stack_play[top]]][stack_play[top]] = 1 ;
                        i++;
                        undos--;
@@ -805,7 +808,7 @@ int undo(int a[])
     return 1 ;
 }
 
-int redo(int a [] , int w , int c , int score , int undos)
+int redo(int a [] , int w , int c , int score , int undos ,int b[][7])
 {
     if(isfull() || undos <= 0){
         gotoxy(35,4);printf("NO MORE REDO     ");
@@ -813,7 +816,7 @@ int redo(int a [] , int w , int c , int score , int undos)
         }
      else{
     play(a,stack_play[++top],w,c);
-    //check_score(&score1,n,a[stack_play[++top]],w,h,b);
+    check_score(&score,stack_play[top],a[stack_play[top]],w,h,b);
     return 1 ;
 }
 
