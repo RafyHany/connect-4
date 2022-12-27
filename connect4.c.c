@@ -353,7 +353,7 @@ int pvp(void)
     gotoxy(2,4);printf("to quit enter -> q ");
     int q ;int score1 = 0 , score2 = 0 ;int n = 0 ;
     char in[100];char op ;
-    int a[w];
+    int a[w],temp_score=0;
     int b[h][w];
     make_array(a,w,h);
     for(int i = 0 ; i < h ; i++){
@@ -388,15 +388,23 @@ int pvp(void)
                 op = in[0] ;
                 switch(op)
                 {
-                    case 'u' : if(undo(a)){
+                    case 'u' : //if(undo(a)){
                        i-- ;
-                       b[a[stack_play[top]]][stack_play[top]] = 0 ;
+                       check_score(&temp_score,stack_play[top],a[stack_play[top]],w,h,b);
+                       score2-=temp_score;
+                       undo(a);
+                       b[a[stack_play[top+1]]][stack_play[top+1]] = 0 ;
                        undos++ ;
-                    }
+                       gotoxy(35,1);printf("p1 score : %d  -  p2 score : %d",score1,score2);
+                       temp_score=0;
+
+                   // }
                        break ;
                     case 'r' : if(redo(a,w,BACKGROUND_RED,score1,undos,b)){
                        i++;
                        b[a[stack_play[top]]][stack_play[top]] = 1 ;
+                     check_score(&score1,stack_play[top],a[stack_play[top]],w,h,b);
+
                        undos--;
                     }
                       break;
@@ -429,15 +437,21 @@ int pvp(void)
                 op = in[0] ;
                 switch(op)
                 {
-                    case 'u' : if(undo(a)){
+                    case 'u' :// if(undo(a)){
                        i-- ;
-                       b[a[stack_play[top]]][stack_play[top]] = 0 ;
+                        check_score(&temp_score,stack_play[top],a[stack_play[top]],w,h,b);
+                       score1-=temp_score;
+                       undo(a);
+                       b[a[stack_play[top+1]]][stack_play[top+1]] = 0 ;
                        undos++ ;
-                    }
+                       temp_score=0;
+                    //}
                       break ;
                     case 'r' : if(redo(a,w,BACKGROUND_GREEN,score2,undos,b)){
                        i++;
+
                        b[a[stack_play[top]]][stack_play[top]] = -1 ;
+                        check_score(&score2,stack_play[top],a[stack_play[top]],w,h,b);
                        undos-- ;
                     }
                       break;
@@ -672,7 +686,7 @@ void diagonal_45_check(int*score,int width_input,int heigh_input,int width,int h
         (*score)++;
     found=1;
  }
- if(width_input-2>=0&&heigh_input+2<=heigh&&width_input+1<=width&&heigh_input-1>=0)
+ if(width_input-2>=0&&heigh_input+2<heigh&&width_input+1<width&&heigh_input-1>=0)
  {
     for(int i=heigh_input+2,j=width_input-2;i>=heigh_input-1,j<=width_input+1;--i,++j)  //to check 2 in left 45 diagonal and 1 in right 45 diagonal
         {
