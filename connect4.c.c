@@ -429,17 +429,17 @@ int pvp(void)
                 op = in[0] ;
                 switch(op)
                 {
-                    case 'u' : //if(undo(a)){
+                    case 'u' :
+                        b[a[stack_play[top]]][stack_play[top]] = 0 ;
+                        if(undo(a,size)){
                        i-- ;
                        check_score(&temp_score,stack_play[top],a[stack_play[top]],w,h,b);
                        score2-=temp_score;
-                       undo(a,size);
-                       b[a[stack_play[top]]+1][stack_play[top]] = 0 ;
                        undos++ ;
                        gotoxy(35,1);printf("p1 score : %d  -  p2 score : %d",score1,score2);
                        temp_score=0;
 
-                   // }
+                    }
                        break ;
                     case 'r' : if(redo(a,w,BACKGROUND_RED,score1,undos,b,size)){
                        i++;
@@ -478,15 +478,15 @@ int pvp(void)
                 op = in[0] ;
                 switch(op)
                 {
-                    case 'u' :// if(undo(a)){
+                    case 'u' :
+                        b[a[stack_play[top]]][stack_play[top]] = 0 ;
+                        if(undo(a,size)){
                        i-- ;
                         check_score(&temp_score,stack_play[top],a[stack_play[top]],w,h,b);
                        score1-=temp_score;
-                       undo(a,size);
-                       b[a[stack_play[top]]+1][stack_play[top]] = 0 ;
                        undos++ ;
                        temp_score=0;
-                    //}
+                    }
                       break ;
                     case 'r' : if(redo(a,w,BACKGROUND_GREEN,score2,undos,b,size)){
                        i++;
@@ -503,6 +503,11 @@ int pvp(void)
                 }
             }
         }
+        for(int k = 0 ; k < h ; k++){
+         gotoxy(80,k);for(int j = 0 ; j < w ; j++){
+            printf(" %d ",b[k][j]);
+         }
+    }
     }
     printf("\n");
         return 6 ;
@@ -512,6 +517,7 @@ int pvc(void)
 {
     system("cls");
     int h = 6 , w = 7 ; int p , undos = 0 , size = 0;
+    int temp_score ;
     the_game(h,w);
     draw_the_box(19,6,1,0);
     gotoxy(2,1);printf("to undo enter -> u ");
@@ -555,15 +561,22 @@ int pvc(void)
                 op = in[0] ;
                 switch(op)
                 {
-                     case 'u' :if( undo(a,size)){
-                      i-- ;
-                      b[a[stack_play[top]]][stack_play[top]] = 0 ;
-                     }
-                      if(undo(a,size)){
-                      i-- ;
-                      b[a[stack_play[top]]][stack_play[top]] = 0 ;
-                      undos++ ;
-                      }
+                     case 'u' :
+                         b[a[stack_play[top]]][stack_play[top]] = 0 ;
+                        if(undo(a,size)){
+                       i-- ;
+                        check_score(&temp_score,stack_play[top],a[stack_play[top]],w,h,b);
+                       score1-=temp_score;
+                       temp_score=0;
+                    }
+                     b[a[stack_play[top]]][stack_play[top]] = 0 ;
+                        if(undo(a,size)){
+                       i-- ;
+                        check_score(&temp_score,stack_play[top],a[stack_play[top]],w,h,b);
+                       score2-=temp_score;
+                       undos++ ;
+                       temp_score=0;
+                    }
                       break ;
                     case 'r' : if(redo(a,w,BACKGROUND_RED,score1,undos,b,size)){
                        i++;
