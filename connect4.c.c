@@ -430,16 +430,16 @@ int pvp(void)
                 switch(op)
                 {
                     case 'u' :
-                        b[a[stack_play[top]]][stack_play[top]] = 0 ;
+                        check_score(&temp_score,stack_play[top],a[stack_play[top]],w,h,b);
+                       score2 -= temp_score;
+                       b[a[stack_play[top]]][stack_play[top]] = 0 ;
                         if(undo(a,size)){
                        i-- ;
-                       check_score(&temp_score,stack_play[top],a[stack_play[top]],w,h,b);
-                       score2-=temp_score;
                        undos++ ;
                        gotoxy(35,1);printf("p1 score : %d  -  p2 score : %d",score1,score2);
-                       temp_score=0;
 
                     }
+                     temp_score=0;
                        break ;
                     case 'r' : if(redo(a,w,BACKGROUND_RED,score1,undos,b,size)){
                        i++;
@@ -479,14 +479,14 @@ int pvp(void)
                 switch(op)
                 {
                     case 'u' :
-                        b[a[stack_play[top]]][stack_play[top]] = 0 ;
+                        check_score(&temp_score,stack_play[top],a[stack_play[top]],w,h,b);
+                       score1 -= temp_score;
+                       b[a[stack_play[top]]][stack_play[top]] = 0 ;
                         if(undo(a,size)){
                        i-- ;
-                        check_score(&temp_score,stack_play[top],a[stack_play[top]],w,h,b);
-                       score1-=temp_score;
                        undos++ ;
-                       temp_score=0;
                     }
+                     temp_score=0;
                       break ;
                     case 'r' : if(redo(a,w,BACKGROUND_GREEN,score2,undos,b,size)){
                        i++;
@@ -518,6 +518,19 @@ int pvc(void)
     system("cls");
     int h = 6 , w = 7 ; int p , undos = 0 , size = 0;
     int temp_score ;
+       if (w <= 19){
+    the_game(h,w);
+    size = 1 ;
+    }
+    else if(w <= 30){
+        the_game2(h,w);
+        size = 2 ;
+    }
+    else
+    {
+        the_game3(h,w);
+        size = 3 ;
+    }
     the_game(h,w);
     draw_the_box(19,6,1,0);
     gotoxy(2,1);printf("to undo enter -> u ");
@@ -562,21 +575,23 @@ int pvc(void)
                 switch(op)
                 {
                      case 'u' :
+                         check_score(&temp_score,stack_play[top],a[stack_play[top]],w,h,b);
+                       score2-=temp_score;
                          b[a[stack_play[top]]][stack_play[top]] = 0 ;
                         if(undo(a,size)){
                        i-- ;
-                        check_score(&temp_score,stack_play[top],a[stack_play[top]],w,h,b);
-                       score1-=temp_score;
-                       temp_score=0;
+
                     }
+                    temp_score=0;
+                    check_score(&temp_score,stack_play[top],a[stack_play[top]],w,h,b);
+                       score1-=temp_score;
                      b[a[stack_play[top]]][stack_play[top]] = 0 ;
                         if(undo(a,size)){
                        i-- ;
-                        check_score(&temp_score,stack_play[top],a[stack_play[top]],w,h,b);
-                       score2-=temp_score;
                        undos++ ;
-                       temp_score=0;
+
                     }
+                    temp_score=0;
                       break ;
                     case 'r' : if(redo(a,w,BACKGROUND_RED,score1,undos,b,size)){
                        i++;
