@@ -16,8 +16,8 @@ game parameter;
 int main_menu(void);
 void time_passed(time_t start_time);
 int computer_turn(int width);
-int pvp();
-int pvc();
+int pvp(int w , int h);
+int pvc(int w , int h);
 void horizontal_check(int*score,int width_input,int heigh_input,int width,int heigh,int a[][width]);
 void vertical_check(int*score,int width_input,int heigh_input,int width,int heigh,int a[][width]);
 void diagonal_45_check(int*score,int width_input,int heigh_input,int width,int heigh,int a[][width]);
@@ -31,23 +31,24 @@ void xml_files();
 int our_strstr(char s1[],char s2[]);
 
 //globals
+int w , h ;
+
 #define MAX 1000
 int stack_play[MAX];
 int top = -1;
 
-int h =6;
-int w = 7 ;
-
 int main()
 {
+    xml_files();
+    w = parameter.WIDTH ,  h = parameter.HEIGHT ;
     switch (main_menu())
     {
-        case 0 : if (pvp()){
+        case 0 : if (pvp(w,h)){
           main();
 
           }
           break ;
-        case 1 : if (pvc()){
+        case 1 : if (pvc(w,h)){
           main();
           }
           break ;
@@ -379,10 +380,10 @@ int play(int a[] ,int n, int w,int c,int size)
 
 
 
-int pvp(void)
+int pvp(int w , int h)
 {
     system("cls");
-    int h = 6 , w = 7 , undos = 0 ;int size = 0 ;
+    int undos = 0 ;int size = 0 ;
     if (w <= 19){
     the_game(h,w);
     size = 1 ;
@@ -522,10 +523,10 @@ int pvp(void)
         return 6 ;
 }
 
-int pvc(void)
+int pvc(int w , int h)
 {
     system("cls");
-    int h = 6 , w = 7 ; int p , undos = 0 , size = 0;
+     int p , undos = 0 , size = 0;
     int temp_score ;
        if (w <= 19){
     the_game(h,w);
