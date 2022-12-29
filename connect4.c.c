@@ -32,7 +32,7 @@ int undo(int a[] , int size);
 int redo(int a [] , int w , int c , int score , int undos , int b[][MAX],int size);
 void xml_files();
 int our_strstr(char s1[],char s2[]);
-void save(char mode ,int undos , int score1 , int score2 , int a[] , int b[][MAX] , int i , int save_no);
+void save(char mode ,int undos , int score1 , int score2 , int a[] , int b[][MAX] , int i , int save_no, int w  , int h );
 void make_array(int a[] , int w , int h);
 int loadgame(int game_no) ;
 
@@ -502,7 +502,7 @@ int pvp(int w , int h, int undos,int score1,int score2,int turn,int a[w],int b[h
                             gotoxy(35,4);printf(" ARE U BLIND BROOO !!! I SAID FROM 1:3       ");
                              scanf("%d",&save_no);
                         }
-                        save('p',undos,score1,score2,a,b,turn,save_no);
+                        save('p',undos,score1,score2,a,b,turn,save_no,w,h);
                          gotoxy(35,4);printf("                                                     ");
                       break;
                     case 'q' : return 6 ;
@@ -565,7 +565,7 @@ int pvp(int w , int h, int undos,int score1,int score2,int turn,int a[w],int b[h
                             gotoxy(35,4);printf(" ARE U BLIND BROOO !!! I SAID FROM 1:3       ");
                                scanf("%d",&save_no);
                         }
-                        save('p',undos,score1,score2,a,b,turn,save_no);
+                        save('p',undos,score1,score2,a,b,turn,save_no,w,h);
                          gotoxy(35,4);printf("                                                     ");
                       break;
                     case 'q' : return 6 ;
@@ -693,7 +693,7 @@ int pvc(int w , int h , int undos,int score1,int score2,int turn,int a[w],int b[
                             gotoxy(35,4);printf(" ARE U BLIND BROOO !!! I SAID FROM 1:3       ");
                             scanf("%d",&save_no);
                         }
-                         save('c',undos,score1,score2,a,b,turn, save_no);
+                         save('c',undos,score1,score2,a,b,turn, save_no,w,h);
 
                      gotoxy(35,4);printf("                                                     ");
                       break;
@@ -1121,7 +1121,7 @@ int our_strstr(char s1[],char s2[]){
     return counter;
 }
 
-void save(char mode , int undos , int score1 , int score2 , int a[] , int b[][w] , int turn , int save_no)
+void save(char mode , int undos , int score1 , int score2 , int a[] , int b[][w] , int turn , int save_no, int w , int h)
 {
     FILE *saved ;
     switch(save_no){
@@ -1132,7 +1132,8 @@ void save(char mode , int undos , int score1 , int score2 , int a[] , int b[][w]
           case 3 : saved = fopen("game3","wb");
                  break ;
     }
-
+    fwrite(&w,sizeof(w),1,saved);
+    fwrite(&h,sizeof(h),1,saved);
     fwrite(&mode,sizeof(mode),1,saved);
     fwrite(&undos,sizeof(undo),1,saved);
     fwrite(&score1,sizeof(score1),1,saved);
@@ -1164,8 +1165,10 @@ int loadgame(int game_no)
         return ;
      }
 
-    char mode ; int undos ,  score1 ,  score2 ,  a[w] ,  b[h][w] ,  turn ;
+    char mode ; int w , h ,undos ,  score1 ,  score2 ,  a[w] ,  b[h][w] ,  turn ;
 
+    fread(&w,sizeof(w),1,load);
+    fread(&h,sizeof(h),1,load);
     fread(&mode,sizeof(mode),1,load);
     fread(&undos,sizeof(undo),1,load);
     fread(&score1,sizeof(score1),1,load);
