@@ -4,6 +4,8 @@
 #include <string.h>
 #include <time.h>
 #include <windows.h>
+#define MAX 1000
+
 
 typedef struct{
 int WIDTH;
@@ -11,13 +13,14 @@ int HEIGHT;
 int HIGHTSCORES;
 } game;
 game parameter;
+
 //main functions
 
 int main_menu(void);
 void time_passed(time_t start_time);
 int computer_turn(int width);
-int pvp(int w , int h);
-int pvc(int w , int h);
+int pvp(int w , int h,int undos,int score1,int score2,int turn,int a[MAX],int b[MAX][MAX]);
+int pvc(int w , int h,int undos,int score1,int score2,int turn,int a[MAX],int b[MAX][MAX]);
 void horizontal_check(int*score,int width_input,int heigh_input,int width,int heigh,int a[][width]);
 void vertical_check(int*score,int width_input,int heigh_input,int width,int heigh,int a[][width]);
 void diagonal_45_check(int*score,int width_input,int heigh_input,int width,int heigh,int a[][width]);
@@ -26,14 +29,18 @@ void check_score(int* score,int width_input,int heigh_input,int width,int heigh,
 void push(int n);
 int pop ();
 int undo(int a[] , int size);
-int redo(int a [] , int w , int c , int score , int undos , int b[][w],int size);
+int redo(int a [] , int w , int c , int score , int undos , int b[][MAX],int size);
 void xml_files();
 int our_strstr(char s1[],char s2[]);
+void save(char mode ,int undos , int score1 , int score2 , int a[] , int b[][MAX] , int i , int save_no);
+void make_array(int a[] , int w , int h);
+int loadgame(int game_no) ;
+
+
 
 //globals
 int w , h ;
 
-#define MAX 1000
 int stack_play[MAX];
 int top = -1;
 
@@ -41,24 +48,37 @@ int main()
 {
     xml_files();
     w = parameter.WIDTH ,  h = parameter.HEIGHT ;
+    int a[w];
+    make_array(a,w,h);
+    int b[h][w];
+    for(int i = 0 ; i < h ; i++){
+         for(int j = 0 ; j < w ; j++){
+            b[i][j] = 0 ;
+         }
+    }
     switch (main_menu())
     {
-        case 0 : if (pvp(w,h)){
-          main();
-
-          }
-          break ;
-        case 1 : if (pvc(w,h)){
+        case 0 : if (pvp(w,h,0,0,0,0,a,b)){
           main();
           }
           break ;
-      /*case 2 : loadgame(1);
+        case 1 : if (pvc(w,h,0,0,0,0,a,b)){
+          main();
+          }
+          break ;
+        case 2 : if(loadgame(1)){
+         main() ;
+        };
           break;
-        case 3 : loadgame(2);
+        case 3 :  if(loadgame(2)){
+         main() ;
+        };
           break;
-        case 4 : loadgame(3);
+        case 4 :  if(loadgame(3)){
+         main() ;
+        };
           break;
-        case 5 ; return 0;*/
+        case 7 : return 0 ;
     }
          srand(time(NULL));
 
@@ -225,6 +245,7 @@ int main_menu(void)
 
 }
     if (pos == 1)
+        pos = 0;
 
      {   gotoxy(39,19);
      system("cls");
@@ -275,6 +296,9 @@ int main_menu(void)
     return (pos+2) ;
 
 }
+   if(pos == 3){
+    return  7 ;
+   }
 
 }
 
@@ -360,11 +384,11 @@ int play(int a[] ,int n, int w,int c,int size)
 
     while(n < 0 || n > w ||a[n]==0)
     {
-        gotoxy(35,4);printf("ENTER A VALID INPUT");
+        gotoxy(35,4);printf("ENTER A VALID INPUT                          ");
+         gotoxy(35,5);printf("            ");
         gotoxy(35,5);scanf("%d",&n);
         n = n-1 ;
-        gotoxy(35,4);printf("                   \n            ");
-
+        gotoxy(35,4);printf("                                      ");
     }
 
         if (size == 1){
@@ -380,15 +404,17 @@ int play(int a[] ,int n, int w,int c,int size)
 
 
 
-int pvp(int w , int h)
+int pvp(int w , int h, int undos,int score1,int score2,int turn,int a[w],int b[h][w])
 {
     system("cls");
-    int undos = 0 ;int size = 0 ;
+    int  save_no ;
+    HANDLE console_color = GetStdHandle(STD_OUTPUT_HANDLE);
+    int size = 0 ;
     if (w <= 19){
     the_game(h,w);
     size = 1 ;
     }
-    else if(w <= 30){
+    else if(w <= 29){
         the_game2(h,w);
         size = 2 ;
     }
@@ -402,26 +428,31 @@ int pvp(int w , int h)
     gotoxy(2,2);printf("to redo enter -> r ");
     gotoxy(2,3);printf("to save enter -> s ");
     gotoxy(2,4);printf("to quit enter -> q ");
-    int q ;int score1 = 0 , score2 = 0 ;int n = 0 ;
-    char in[100];char op ;
-    int a[w],temp_score=0;
-    int b[h][w];
-    make_array(a,w,h);
-    for(int i = 0 ; i < h ; i++){
+    for(int k = 0 ; k < h ; k++){
          for(int j = 0 ; j < w ; j++){
-            b[i][j] = 0 ;
+             if( b[k][j] == 1 ){
+                fill(6*(j+1),7+(3*(k+1)),BACKGROUND_RED,size);
+             }
+
+         else if( b[k][j] == -1 ){
+                fill(6*(j+1),7+(3*(k+1)),BACKGROUND_GREEN,size);
+             }
          }
     }
+    SetConsoleTextAttribute(console_color , 15 );
+    int q ;int n = 0 ;
+    char in[100];char op ;
+    int temp_score=0;
     time_t start_time=time(NULL);
-    int i = 0;
-    while(i < w*h)
+    while(turn < w*h)
     {
-        q = i % 2 ;
+        q = turn % 2 ;
         if ( q == 0){
             gotoxy(35,2); time_passed(start_time);
             gotoxy(35,3);printf("player 1 turn");
-            gotoxy(35,1);printf("p1 score : %d  -  p2 score : %d",score1,score2);
-            gotoxy(35,0);printf("p1 moves : %d  -  p2 moves : %d",i/2,i/2);
+            gotoxy(35,1);printf("p1 score : %d  -  p2 score : %d  ",score1,score2);
+            gotoxy(35,0);printf("p1 moves : %d  -  p2 moves : %d  ",turn/2,turn/2);
+            gotoxy(35,5);printf("                          ");
             gotoxy(35,5);fgets(in,100,stdin);
             if(atoi(in) != 0 ){
             n = atoi(in);
@@ -431,7 +462,7 @@ int pvp(int w , int h)
             gotoxy(35,5);printf("                 ");
             b[a[n]][n] = 1 ;
             check_score(&score1,n,a[n],w,h,b);
-            i++;
+            turn++;
             undos = 0 ;
             }
             else
@@ -443,23 +474,36 @@ int pvp(int w , int h)
                         check_score(&temp_score,stack_play[top],a[stack_play[top]],w,h,b);
                        score2 -= temp_score;
                        b[a[stack_play[top]]][stack_play[top]] = 0 ;
+                       if(score1 < 0 ){
+                        score1 = 0 ;
+                       }
+                       if(score2 < 0 ){
+                        score2 = 0 ;
+                       }
                         if(undo(a,size)){
-                       i-- ;
+                       turn-- ;
                        undos++ ;
-                       gotoxy(35,1);printf("p1 score : %d  -  p2 score : %d",score1,score2);
+                       gotoxy(35,1);printf("p1 score : %d  -  p2 score : %d  ",score1,score2);
 
                     }
                      temp_score=0;
                        break ;
                     case 'r' : if(redo(a,w,BACKGROUND_RED,score1,undos,b,size)){
-                       i++;
+                       turn++;
                        b[a[stack_play[top]]][stack_play[top]] = 1 ;
                      check_score(&score1,stack_play[top],a[stack_play[top]],w,h,b);
-
                        undos--;
                     }
                       break;
-                    case 's' : printf("save");
+                    case 's' :
+                        gotoxy(35,4);printf("ENTER THE NUMBER OF THE SAVING SLOT FROM 1:3 ");
+                        scanf("%d",&save_no);
+                        while(save_no < 1 || save_no > 3){
+                            gotoxy(35,4);printf(" ARE U BLIND BROOO !!! I SAID FROM 1:3       ");
+                             scanf("%d",&save_no);
+                        }
+                        save('p',undos,score1,score2,a,b,turn,save_no);
+                         gotoxy(35,4);printf("                                                     ");
                       break;
                     case 'q' : return 6 ;
                     break;
@@ -469,8 +513,9 @@ int pvp(int w , int h)
         else{
             gotoxy(35,2); time_passed(start_time);
             gotoxy(35,3);printf("player 2 turn");
-            gotoxy(35,1);printf("p1 score : %d  -  p2 score : %d",score1,score2);
-            gotoxy(35,0);printf("p1 moves : %d  -  p2 moves : %d",(i/2)+1,i/2);
+            gotoxy(35,1);printf("p1 score : %d  -  p2 score : %d  ",score1,score2);
+            gotoxy(35,0);printf("p1 moves : %d  -  p2 moves : %d  ",(turn/2)+1,turn/2);
+            gotoxy(35,5);printf("                            ");
             gotoxy(35,5);fgets(in,100,stdin);
             if(atoi(in) != 0 ){
             n = atoi(in);
@@ -480,7 +525,7 @@ int pvp(int w , int h)
             gotoxy(35,5);printf("                 ");
             b[a[n]][n] = -1 ;
             check_score(&score2,n,a[n],w,h,b);
-            i++;
+            turn++;
             undos = 0 ;
             }
              else
@@ -492,41 +537,53 @@ int pvp(int w , int h)
                         check_score(&temp_score,stack_play[top],a[stack_play[top]],w,h,b);
                        score1 -= temp_score;
                        b[a[stack_play[top]]][stack_play[top]] = 0 ;
+                       if(score1 < 0 ){
+                        score1 = 0 ;
+                       }
+                       if(score2 < 0 ){
+                        score2 = 0 ;
+                       }
                         if(undo(a,size)){
-                       i-- ;
+                       turn-- ;
                        undos++ ;
+                       gotoxy(35,1);printf("p1 score : %d  -  p2 score : %d  ",score1,score2);
                     }
                      temp_score=0;
                       break ;
                     case 'r' : if(redo(a,w,BACKGROUND_GREEN,score2,undos,b,size)){
-                       i++;
+                       turn++;
 
                        b[a[stack_play[top]]][stack_play[top]] = -1 ;
                         check_score(&score2,stack_play[top],a[stack_play[top]],w,h,b);
                        undos-- ;
                     }
                       break;
-                    case 's' : printf("save");
+                    case 's' :
+                        gotoxy(35,4);printf("ENTER THE NUMBER OF THE SAVING SLOT FROM 1:3 ");
+                        scanf("%d",&save_no);
+                        while(save_no < 1 || save_no > 3){
+                            gotoxy(35,4);printf(" ARE U BLIND BROOO !!! I SAID FROM 1:3       ");
+                               scanf("%d",&save_no);
+                        }
+                        save('p',undos,score1,score2,a,b,turn,save_no);
+                         gotoxy(35,4);printf("                                                     ");
                       break;
                     case 'q' : return 6 ;
                       break;
                 }
             }
         }
-        for(int k = 0 ; k < h ; k++){
-         gotoxy(80,k);for(int j = 0 ; j < w ; j++){
-            printf(" %d ",b[k][j]);
-         }
-    }
     }
     printf("\n");
         return 6 ;
 }
 
-int pvc(int w , int h)
+int pvc(int w , int h , int undos,int score1,int score2,int turn,int a[w],int b[h][w])
 {
     system("cls");
-     int p , undos = 0 , size = 0;
+    HANDLE console_color = GetStdHandle(STD_OUTPUT_HANDLE);
+    int save_no ;
+    int size = 0;
     int temp_score ;
        if (w <= 19){
     the_game(h,w);
@@ -542,31 +599,35 @@ int pvc(int w , int h)
         size = 3 ;
     }
     the_game(h,w);
+    for(int k = 0 ; k < h ; k++){
+         for(int j = 0 ; j < w ; j++){
+             if( b[k][j] == 1 ){
+                fill(6*(j+1),7+(3*(k+1)),BACKGROUND_RED,size);
+             }
+
+         else if( b[k][j] == -1 ){
+                fill(6*(j+1),7+(3*(k+1)),BACKGROUND_GREEN,size);
+             }
+         }
+    }
+    SetConsoleTextAttribute(console_color , 15 );
     draw_the_box(19,6,1,0);
     gotoxy(2,1);printf("to undo enter -> u ");
     gotoxy(2,2);printf("to redo enter -> r ");
     gotoxy(2,3);printf("to save enter -> s ");
     gotoxy(2,4);printf("to quit enter -> q ");
-    int q , n , score1 = 0 , score2 = 0 ;
-    int a[w];
+    int q , n ;
     char in[100];char op ;
-    make_array(a,w,h);
-    int b[h][w];
-    for(int i = 0 ; i < h ; i++){
-         for(int j = 0 ; j < w ; j++){
-            b[i][j] = 0 ;
-         }
-    }
     time_t start_time=time(NULL);
-    int i = 0 ;
-    while(i < w*h)
+    while(turn < w*h)
     {
-        q = i % 2 ;
+        q = turn % 2 ;
         if ( q == 0){
             gotoxy(35,2); time_passed(start_time);
             gotoxy(35,3);printf("player 1 turn");
             gotoxy(35,1);printf("p1 score : %d  -  p2 score : %d",score1,score2);
-            gotoxy(35,0);printf("p1 moves : %d  -  p2 moves : %d",i/2,i/2);
+            gotoxy(35,0);printf("p1 moves : %d  -  p2 moves : %d",turn/2,turn/2);
+            gotoxy(35,5);printf("                       ");
             gotoxy(35,5);fgets(in,100,stdin);
             if(atoi(in) != 0 ){
             n = atoi(in);
@@ -576,7 +637,7 @@ int pvc(int w , int h)
             gotoxy(35,5);printf("                 ");
             b[a[n]][n] = 1 ;
             check_score(&score1,n,a[n],w,h,b);
-            i++;
+            turn++;
             undos = 0;
             }
             else
@@ -588,32 +649,53 @@ int pvc(int w , int h)
                          check_score(&temp_score,stack_play[top],a[stack_play[top]],w,h,b);
                        score2-=temp_score;
                          b[a[stack_play[top]]][stack_play[top]] = 0 ;
+                         if(score1 < 0 ){
+                        score1 = 0 ;
+                       }
+                       if(score2 < 0 ){
+                        score2 = 0 ;
+                       }
                         if(undo(a,size)){
-                       i-- ;
+                       turn-- ;
 
                     }
                     temp_score=0;
                     check_score(&temp_score,stack_play[top],a[stack_play[top]],w,h,b);
                        score1-=temp_score;
                      b[a[stack_play[top]]][stack_play[top]] = 0 ;
+                     if(score1 < 0 ){
+                        score1 = 0 ;
+                       }
+                       if(score2 < 0 ){
+                        score2 = 0 ;
+                       }
                         if(undo(a,size)){
-                       i-- ;
+                       turn-- ;
                        undos++ ;
 
                     }
                     temp_score=0;
                       break ;
                     case 'r' : if(redo(a,w,BACKGROUND_RED,score1,undos,b,size)){
-                       i++;
+                       turn++;
                        b[a[stack_play[top]]][stack_play[top]] = 1 ;
                        }
                        if(redo(a,w,BACKGROUND_GREEN,score2,undos,b,size)){
                        b[a[stack_play[top]]][stack_play[top]] = 1 ;
-                       i++;
+                       turn++;
                        undos--;
                        }
                       break;
-                    case 's' : printf("save");
+                    case 's' :
+                        gotoxy(35,4);printf("ENTER THE NUMBER OF THE SAVING SLOT FROM 1:3 ");
+                        scanf("%d",&save_no);
+                        while(save_no < 1 || save_no > 3){
+                            gotoxy(35,4);printf(" ARE U BLIND BROOO !!! I SAID FROM 1:3       ");
+                            scanf("%d",&save_no);
+                        }
+                         save('c',undos,score1,score2,a,b,turn, save_no);
+
+                     gotoxy(35,4);printf("                                                     ");
                       break;
                     case 'q' : return 6;
                     break;
@@ -624,7 +706,7 @@ int pvc(int w , int h)
             gotoxy(35,2); time_passed(start_time);
             gotoxy(35,3);printf("computer turn");
             gotoxy(35,1);printf("p1 score : %d  -  p2 score : %d",score1,score2);
-            gotoxy(35,0);printf("p1 moves : %d  -  p2 moves : %d",i/2,i/2);
+            gotoxy(35,0);printf("p1 moves : %d  -  p2 moves : %d",turn/2,turn/2);
              do
              {
               n = computer_turn(w-1);
@@ -633,7 +715,7 @@ int pvc(int w , int h)
             push(n);
             b[a[n]][n] = -1 ;
             check_score(&score2,n,a[n],w,h,b);
-            i++;
+            turn++;
         }
     }
     return 6 ;
@@ -1038,3 +1120,74 @@ int our_strstr(char s1[],char s2[]){
     }
     return counter;
 }
+
+void save(char mode , int undos , int score1 , int score2 , int a[] , int b[][w] , int turn , int save_no)
+{
+    FILE *saved ;
+    switch(save_no){
+          case 1 : saved = fopen("game","wb");
+                 break ;
+          case 2 : saved = fopen("game2","wb");
+                 break ;
+          case 3 : saved = fopen("game3","wb");
+                 break ;
+    }
+
+    fwrite(&mode,sizeof(mode),1,saved);
+    fwrite(&undos,sizeof(undo),1,saved);
+    fwrite(&score1,sizeof(score1),1,saved);
+    fwrite(&score2,sizeof(score2),1,saved);
+    fwrite(&turn,sizeof(turn),1,saved);
+    fwrite(&top,sizeof(top),1,saved);
+    fwrite(stack_play,sizeof(stack_play[0]),MAX,saved);
+    fwrite(a,sizeof(a[0]),w,saved);
+    fwrite(b,sizeof(b[0][0]),w*h,saved);
+
+    fclose(saved);
+
+}
+
+int loadgame(int game_no)
+{
+    FILE *load ;
+    switch(game_no){
+           case 1 : load = fopen("game","rb");
+               break ;
+           case 2 : load = fopen("game2","rb");
+               break ;
+           case 3 : load = fopen("game3","rb");
+               break ;
+    }
+
+     if(load == NULL ){
+        printf("ERROR LOADING THE FILE");
+        return ;
+     }
+
+    char mode ; int undos ,  score1 ,  score2 ,  a[w] ,  b[h][w] ,  turn ;
+
+    fread(&mode,sizeof(mode),1,load);
+    fread(&undos,sizeof(undo),1,load);
+    fread(&score1,sizeof(score1),1,load);
+    fread(&score2,sizeof(score2),1,load);
+    fread(&turn,sizeof(turn),1,load);
+    fread(&top,sizeof(top),1,load);
+    fread(stack_play,sizeof(stack_play[0]),MAX,load);
+    fread(a,sizeof(a[0]),w,load);
+    fread(b,sizeof(b[0][0]),w*h,load);
+
+    fclose(load);
+
+
+    if(mode == 'p')
+    {
+        pvp(w,h,undos,score1,score2,turn,a,b);
+    }
+    if(mode == 'c')
+    {
+        pvc(w,h,undos,score1,score2,turn,a,b);
+    }
+
+}
+
+
