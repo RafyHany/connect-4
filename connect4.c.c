@@ -353,8 +353,16 @@ void the_game2(int h, int w)
 void the_game3(int h, int w)
 {
     printf("\n\n\n\n\n\n\n\n\n\n");
-    for(int k = 1 ; k < w+1 ; k++ ){
-        //printf("",k);
+    printf("\n");
+    for(int i = 0 ; i < h ; i++){
+        for (int j = 0 ; j < w+1 ; j++){
+            printf("%c  ",186);
+        }
+         printf("\n");
+        for (int j = 0 ; j < w ; j++){
+            printf("%c%c%c",205,205,205);
+        }
+        printf("\n");
     }
 }
 
@@ -373,6 +381,10 @@ void fill(int f , int g , int c ,int size)
     gotoxy(f,g);
     printf("    ");}
     if(size == 2){
+       gotoxy(f,g);
+    printf("  ");
+    }
+    if(size == 3){
        gotoxy(f,g);
     printf("  ");
     }
@@ -397,6 +409,9 @@ int play(int a[] ,int n, int w,int c,int size)
         if(size == 2){
             fill((4*(n+1)) , 7+(3*a[n]) , c , size);
         }
+        if(size == 3){
+            fill((3*(n))+1 , 9+(2*a[n]) , c , size);
+        }
         SetConsoleTextAttribute(console_color , 15 );
         a[n]-- ;
         return n ;
@@ -414,7 +429,7 @@ int pvp(int w , int h, int undos,int score1,int score2,int turn,int a[w],int b[h
     the_game(h,w);
     size = 1 ;
     }
-    else if(w <= 29){
+    else if(w < 30){
         the_game2(h,w);
         size = 2 ;
     }
@@ -499,7 +514,7 @@ int pvp(int w , int h, int undos,int score1,int score2,int turn,int a[w],int b[h
                         gotoxy(35,4);printf("ENTER THE NUMBER OF THE SAVING SLOT FROM 1:3 ");
                         scanf("%d",&save_no);
                         while(save_no < 1 || save_no > 3){
-                            gotoxy(35,4);printf(" ARE U BLIND BROOO !!! I SAID FROM 1:3       ");
+                            gotoxy(35,4);printf("          BROOO !!! I SAID FROM 1:3       ");
                              scanf("%d",&save_no);
                         }
                         save('p',undos,score1,score2,a,b,turn,save_no,w,h);
@@ -562,7 +577,7 @@ int pvp(int w , int h, int undos,int score1,int score2,int turn,int a[w],int b[h
                         gotoxy(35,4);printf("ENTER THE NUMBER OF THE SAVING SLOT FROM 1:3 ");
                         scanf("%d",&save_no);
                         while(save_no < 1 || save_no > 3){
-                            gotoxy(35,4);printf(" ARE U BLIND BROOO !!! I SAID FROM 1:3       ");
+                            gotoxy(35,4);printf("         BROOO !!! I SAID FROM 1:3       ");
                                scanf("%d",&save_no);
                         }
                         save('p',undos,score1,score2,a,b,turn,save_no,w,h);
@@ -589,7 +604,7 @@ int pvc(int w , int h , int undos,int score1,int score2,int turn,int a[w],int b[
     the_game(h,w);
     size = 1 ;
     }
-    else if(w <= 30){
+    else if(w <30){
         the_game2(h,w);
         size = 2 ;
     }
@@ -690,7 +705,7 @@ int pvc(int w , int h , int undos,int score1,int score2,int turn,int a[w],int b[
                         gotoxy(35,4);printf("ENTER THE NUMBER OF THE SAVING SLOT FROM 1:3 ");
                         scanf("%d",&save_no);
                         while(save_no < 1 || save_no > 3){
-                            gotoxy(35,4);printf(" ARE U BLIND BROOO !!! I SAID FROM 1:3       ");
+                            gotoxy(35,4);printf("          BROOO !!! I SAID FROM 1:3       ");
                             scanf("%d",&save_no);
                         }
                          save('c',undos,score1,score2,a,b,turn, save_no,w,h);
@@ -985,6 +1000,9 @@ int undo(int a[],int size)
     else if ( size == 2){
         fill((4*(var+1)) , 7+(3*a[var]) , 15 , size);
     }
+     else if ( size == 3){
+        fill(((3*var)+1) , 9+(2*a[var]) , 15 , size);
+    }
     return 1 ;
 }
 
@@ -1192,5 +1210,13 @@ int loadgame(int game_no)
     }
 
 }
+
+
+
+
+
+
+//AI
+
 
 
