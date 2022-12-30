@@ -7,6 +7,8 @@
 #include <ctype.h>
 
 #define MAX 1000
+
+
 typedef struct
 {
 char name[30];
@@ -445,7 +447,7 @@ int play(int a[] ,int n, int w,int c,int size)
 
     char in[100] ;
 
-    while(n < 0 || n > w ||a[n]==0)
+    while(n < 0 || n >= w ||a[n] == 0)
     {
         gotoxy(35,4);printf("ENTER A VALID INPUT                          ");
          gotoxy(35,5);printf("            ");
@@ -527,8 +529,8 @@ int pvp(int w , int h, int undos,int score1,int score2,int turn,int a[w],int b[h
             gotoxy(35,4);printf("                                  ");
             n = atoi(in);
             n = n - 1 ;
-            n = play(a,n,w,BACKGROUND_RED,size);
-            push(n);
+            n = play(a,n,w,BACKGROUND_RED,size) ;
+            push(n) ;
             gotoxy(35,5);printf("                 ");
             b[a[n]][n] = 1 ;
             check_score(&score1,n,a[n],w,h,b);
@@ -591,7 +593,7 @@ int pvp(int w , int h, int undos,int score1,int score2,int turn,int a[w],int b[h
             if(atoi(in) != 0 ){
             gotoxy(35,4);printf("                                  ");
             n = atoi(in);
-            n = n-1 ;
+            n = n - 1 ;
             n = play(a,n,w,BACKGROUND_GREEN,size);
             push(n);
             gotoxy(35,5);printf("                 ");
@@ -645,9 +647,14 @@ int pvp(int w , int h, int undos,int score1,int score2,int turn,int a[w],int b[h
                 }
             }
         }
+        for(int p = 0 ; p<h ; p++ ){
+            gotoxy(80,p);for(int t = 0 ; t < w;t++){
+                    printf(" %d ",b[p][t]);
+            }
+        }
     }
     gotoxy(35,1);printf("p1 score : %d  -  p2 score : %d",score1,score2);
-    gotoxy(35,0);printf("p1 moves : %d  -  p2 moves : %d",turn/2,turn/2 + 1);
+    gotoxy(35,0);printf("p1 moves : %d  -  p2 moves : %d",turn/2,turn/2 );
     gotoxy(0,6);end_of_game(score1,score2);
 
         return 6 ;
@@ -795,7 +802,7 @@ int pvc(int w , int h , int undos,int score1,int score2,int turn,int a[w],int b[
         }
     }
     gotoxy(35,1);printf("p1 score : %d  -  p2 score : %d",score1,score2);
-    gotoxy(35,0);printf("p1 moves : %d  -  p2 moves : %d",turn/2,turn/2+1);
+    gotoxy(35,0);printf("p1 moves : %d  -  p2 moves : %d",turn/2,turn/2);
     gotoxy(0,6);end_of_game(score1,score2);
 
     return 6 ;
