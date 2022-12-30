@@ -4,7 +4,14 @@
 #include <string.h>
 #include <time.h>
 #include <windows.h>
+#include <ctype.h>
+
 #define MAX 1000
+typedef struct
+{
+char name[30];
+int score ;
+} information;
 
 
 typedef struct{
@@ -35,6 +42,12 @@ int our_strstr(char s1[],char s2[]);
 void save(char mode ,int undos , int score1 , int score2 , int a[] , int b[][MAX] , int i , int save_no, int w  , int h );
 void make_array(int a[] , int w , int h);
 int loadgame(int game_no) ;
+void end_of_game(int score1,int score2);
+ void conver_to_lower(char name []);
+ void merge(information arr[], int l, int m, int r);
+ void mergeSort(information arr[],int l, int r);
+void Top_players(int number_of_top);
+
 
 
 
@@ -590,6 +603,8 @@ int pvp(int w , int h, int undos,int score1,int score2,int turn,int a[w],int b[h
         }
     }
     printf("\n");
+    end_of_game(score1,score2);
+
         return 6 ;
 }
 
@@ -733,6 +748,8 @@ int pvc(int w , int h , int undos,int score1,int score2,int turn,int a[w],int b[
             turn++;
         }
     }
+    end_of_game(score1,score2);
+
     return 6 ;
 }
 void horizontal_check(int*score,int width_input,int heigh_input,int width,int heigh,int a[][width]) //check horizontal row
@@ -1038,7 +1055,7 @@ void xml_files()
        }
        }
     char ch,file_without_space[500]= {'0'},conf_1[]="<Configurations>",width_1[]="<Width>",height_1[]="<Height>",highscores_1[]="<Highscores>";
-    char conf_2[]="</Configurations>",width_2[]="</Width>",height_2[]="</Height>",highscores_2[]="</Heighscore>";
+    char conf_2[]="</Configurations>",width_2[]="</Width>",height_2[]="</Height>",highscores_2[]="</Highscores>";
     int i=0,start_con,end_con,start_w,end_w,start_h,end_h,start_hs,end_hs;
     FILE *file;
     if((file= fopen(path, "r"))==NULL){
@@ -1046,11 +1063,22 @@ void xml_files()
         xml_files();
         return;
     }
+    int tags_bords;
     while((ch=fgetc(file))!=EOF){
-        if(ch!=' '&&ch!='\n'&&ch!='\t'){           //IGNORING ANY SPACES OR TABS OR BREAKING LINE
+        if(ch=='<')
+         tags_bords=0;
+        if(ch=='>')
+        tags_bords=1;
+
+        if(ch!=' '&&ch!='\n'&&ch!='\t'&&tags_bords==1){           //IGNORING ANY SPACES OR TABS OR BREAKING LINE
             file_without_space[i]=ch;
             i++;
         }
+        else  if(tags_bords==0){
+            file_without_space[i]=ch;
+            i++;
+        }
+
     }
     file_without_space[i]='\0';
     fclose(file);
@@ -1071,8 +1099,14 @@ void xml_files()
             return xml_files() ;
         }
     char width[size_wid];
-    for(int p=0,j=start_w+7;j<end_w;++j,++p)
+    for(int p=0,j=start_w+7;j<end_w;++j,++p){
+    if(isalpha(file_without_space[j]))
+    {
+            error_path++;
+            return xml_files() ;
+    }
     width[p]=file_without_space[j];
+    }
     width[end_w]='\0';
 
 
@@ -1086,8 +1120,15 @@ void xml_files()
             return xml_files() ;
         }
     char heigh[size_hig];
-       for(int h=0,v=start_h+8;v<end_h;++v,++h)
+       for(int h=0,v=start_h+8;v<end_h;++v,++h){
+    if(isalpha(file_without_space[v]))
+    {
+            error_path++;
+            return xml_files() ;
+    }
          heigh[h]=file_without_space[v];
+
+         }
         heigh[end_h]='\0';
 
 
@@ -1103,12 +1144,19 @@ void xml_files()
 
     char highscores[size_hs];
        for(int p=0,j=start_hs+12;j<end_hs;++j,++p)
+       {
+    if(isalpha(file_without_space[j]))
+    {
+            error_path++;
+            return xml_files() ;
+    }
          highscores[p]=file_without_space[j];
+       }
       highscores[end_hs]='\0';
 
 
 
-   if(atoi(heigh)<4||atoi(width)<4||atoi(highscores)<4)
+   if(atoi(heigh)<4||atoi(width)<4||atoi(highscores)<1)
     {
                 error_path++;
             return xml_files() ;
@@ -1209,6 +1257,179 @@ int loadgame(int game_no)
         pvc(w,h,undos,score1,score2,turn,a,b);
     }
 
+}
+void end_of_game(int score1,int score2)
+{
+    if (score1==score2){
+        printf("Ooops A Draw,No Winner,NO Loser!!");
+        Sleep(5000);
+        return ;}
+
+    information player;
+    if(score1>score2)
+    {
+        printf("Winner Winner Chicken Dinner , congratulation player1!!\n please enter your name : ");
+        fgets(player.name,30,stdin);
+        conver_to_lower(player.name);
+        player.score=score1;
+    }else{
+        printf("Winner Winner Chicken Dinner , congratulation player2!!\n please enter your name : ");
+        fgets(player.name,30,stdin);
+        conver_to_lower(player.name);
+        player.score=score2;
+    }
+    information top_players[100];
+    FILE *file;
+
+       int number_of_saves=0,identically=0;
+    if((file=fopen("Topscores.binary","rb"))==NULL)
+    {
+        printf("Error in top score file!!!");
+        return ;
+    }
+
+    while ( fread(&top_players[number_of_saves],sizeof(information),1,file))
+    {
+
+        if(!(strcmp(player.name,top_players[number_of_saves].name)))
+           {
+               if (player.score>=top_players[number_of_saves].score)
+                   top_players[number_of_saves].score=player.score;
+                identically=1;
+           }
+           number_of_saves++;
+
+    }
+    if(identically==0)
+    {
+        strcpy(top_players[number_of_saves].name,player.name);
+        top_players[number_of_saves].score=player.score;
+        number_of_saves++;
+   }
+
+    fclose(file);
+     mergeSort(top_players,0,number_of_saves-1);
+
+   FILE *file2;
+   if((file2=fopen("Topscores.binary","wb"))==NULL)
+    {
+        printf("Error in top score file!!!");
+        return ;
+    }
+    for(int i=0;i<number_of_saves;++i)
+            fwrite(&top_players[i],sizeof(information),1,file2);
+
+     fclose(file2);
+
+}
+ void conver_to_lower(char name [])
+ {
+     int i=0;
+     while(name[i]!='\0')
+     {
+         name[i]=tolower(name[i]);
+         ++i;
+     }
+ }
+
+void merge(information arr[], int l, int m, int r)
+{
+    int i, j, k;
+    int n1 = m - l + 1;
+    int n2 = r - m;
+
+    // Create temp arrays
+    information L[n1], R[n2];
+    // Copy data to temp arrays
+    // L[] and R[]
+    for (i = 0; i < n1; i++)
+    {
+        L[i].score = arr[l + i].score;
+        strcpy(L[i].name,arr[l+i].name);
+    }
+    for (j = 0; j < n2; j++)
+    {
+        R[j].score = arr[m + 1 + j].score;
+        strcpy(R[j].name,arr[m+1+j].name);
+    }
+    // Merge the temp arrays back
+    // into arr[l..r]
+    // Initial index of first subarray
+    i = 0;
+
+    // Initial index of second subarray
+    j = 0;
+
+    // Initial index of merged subarray
+    k = l;
+    while (i < n1 && j < n2)
+    {
+        if (L[i].score <= R[j].score)
+        {
+            arr[k].score = L[i].score;
+            strcpy(arr[k].name,L[i].name);
+            i++;
+        }
+        else
+        {
+            arr[k].score = R[j].score;
+            strcpy(arr[k].name,R[j].name);
+            j++;
+        }
+        k++;
+    }
+    while (i < n1) {
+        arr[k].score = L[i].score;
+        strcpy(arr[k].name,L[i].name);
+        i++;
+        k++;
+    }
+
+    while (j < n2)
+    {
+        arr[k].score = R[j].score;
+        strcpy(arr[k].name,R[j].name);
+        j++;
+        k++;
+    }
+}
+
+void mergeSort(information arr[],int l, int r)
+{
+    if (l < r)
+    {
+
+        int m = l + (r - l) / 2;
+
+        // Sort first and second halves
+        mergeSort(arr, l, m);
+        mergeSort(arr, m + 1, r);
+
+        merge(arr, l, m, r);
+    }
+}
+void Top_players(int number_of_top)
+{
+      information top_players[100];
+         int x=0;
+     FILE * file3;
+    if((file3=fopen("Topscores.binary","rb"))==NULL)
+    {
+        printf("Error in top score file!!!");
+        return ;
+    }
+
+    while (fread(&top_players[x],sizeof(information),1,file3))x++;
+   mergeSort(top_players,0,x-1);
+    if(x-1>=number_of_top)
+    {
+      for(int i=x-1;i>x-1-number_of_top;--i)
+        printf(" %-5d %-35s\n",top_players[i].score,top_players[i].name);}
+    else{
+      for(int i=x-1;i>=0;--i)
+        printf(" %-5d %-35s\n",top_players[i].score,top_players[i].name);
+        }
+    fclose(file3);
 }
 
 
