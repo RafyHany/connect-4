@@ -647,8 +647,8 @@ int pvp(int w , int h, int undos,int score1,int score2,int turn,int a[w],int b[h
         }
     }
     gotoxy(35,1);printf("p1 score : %d  -  p2 score : %d",score1,score2);
-    gotoxy(35,0);printf("p1 moves : %d  -  p2 moves : %d",turn/2,turn/2);
-    end_of_game(score1,score2);
+    gotoxy(35,0);printf("p1 moves : %d  -  p2 moves : %d",turn/2,turn/2 + 1);
+    gotoxy(0,6);end_of_game(score1,score2);
 
         return 6 ;
 }
@@ -795,8 +795,8 @@ int pvc(int w , int h , int undos,int score1,int score2,int turn,int a[w],int b[
         }
     }
     gotoxy(35,1);printf("p1 score : %d  -  p2 score : %d",score1,score2);
-    gotoxy(35,0);printf("p1 moves : %d  -  p2 moves : %d",turn/2,turn/2);
-    end_of_game(score1,score2);
+    gotoxy(35,0);printf("p1 moves : %d  -  p2 moves : %d",turn/2,turn/2+1);
+    gotoxy(0,6);end_of_game(score1,score2);
 
     return 6 ;
 }
