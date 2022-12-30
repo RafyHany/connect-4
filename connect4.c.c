@@ -647,11 +647,6 @@ int pvp(int w , int h, int undos,int score1,int score2,int turn,int a[w],int b[h
                 }
             }
         }
-        for(int p = 0 ; p<h ; p++ ){
-            gotoxy(80,p);for(int t = 0 ; t < w;t++){
-                    printf(" %d ",b[p][t]);
-            }
-        }
     }
     gotoxy(35,1);printf("p1 score : %d  -  p2 score : %d",score1,score2);
     gotoxy(35,0);printf("p1 moves : %d  -  p2 moves : %d",turn/2,turn/2 );
