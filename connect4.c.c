@@ -43,9 +43,9 @@ void save(char mode  , int score1 , int score2 , int a[] , int b[][MAX] , int i 
 void make_array(int a[] , int w , int h);
 int loadgame(int game_no) ;
 void end_of_game(int score1,int score2);
- void conver_to_lower(char name []);
- void merge(information arr[], int l, int m, int r);
- void mergeSort(information arr[],int l, int r);
+void conver_to_lower(char name []);
+void merge(information arr[], int l, int m, int r);
+void mergeSort(information arr[],int l, int r);
 void Top_players(int number_of_top);
 
 
@@ -102,6 +102,7 @@ int main()
             c = getch();
         }
         main();
+        break ;
 
     }
          srand(time(NULL));
@@ -279,8 +280,8 @@ int main_menu(void)
 }
     else if (pos == 1)
 
-
-     {    pos = 0;
+     {
+         pos = 0;
          gotoxy(39,19);
      system("cls");
         draw_the_box(30,9,39,11);
@@ -523,6 +524,7 @@ int pvp(int w , int h, int undos,int score1,int score2,int turn,int a[w],int b[h
             gotoxy(35,5);printf("                          ");
             gotoxy(35,5);fgets(in,100,stdin);
             if(atoi(in) != 0 ){
+            gotoxy(35,4);printf("                                  ");
             n = atoi(in);
             n = n - 1 ;
             n = play(a,n,w,BACKGROUND_RED,size);
@@ -584,8 +586,10 @@ int pvp(int w , int h, int undos,int score1,int score2,int turn,int a[w],int b[h
             gotoxy(35,1);printf("p1 score : %d  -  p2 score : %d  ",score1,score2);
             gotoxy(35,0);printf("p1 moves : %d  -  p2 moves : %d  ",(turn/2)+1,turn/2);
             gotoxy(35,5);printf("                            ");
+
             gotoxy(35,5);fgets(in,100,stdin);
             if(atoi(in) != 0 ){
+            gotoxy(35,4);printf("                                  ");
             n = atoi(in);
             n = n-1 ;
             n = play(a,n,w,BACKGROUND_GREEN,size);
@@ -700,6 +704,7 @@ int pvc(int w , int h , int undos,int score1,int score2,int turn,int a[w],int b[
             gotoxy(35,5);printf("                       ");
             gotoxy(35,5);fgets(in,100,stdin);
             if(atoi(in) != 0 ){
+            gotoxy(35,4);printf("                                     ");
             n = atoi(in);
             n = n-1 ;
             n = play(a,n,w,BACKGROUND_RED,size);
@@ -1288,11 +1293,11 @@ int loadgame(int game_no)
 
     if(mode == 'p')
     {
-        pvp(w,h,undos,score1,score2,turn,a,b);
+        pvp(w,h,0,score1,score2,turn,a,b);
     }
     if(mode == 'c')
     {
-        pvc(w,h,undos,score1,score2,turn,a,b);
+        pvc(w,h,0,score1,score2,turn,a,b);
     }
 
 }
